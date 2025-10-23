@@ -1,43 +1,22 @@
 [
   {
     "adult": false,
-    "backdrop_path": "/9xfDWXAUbFXQK585JvByT5pEAhe.jpg",
+    "backdrop_path": "/2va32apQP97gvUxaMnL5wYt4CRB.jpg",
     "genre_ids": [
-      16,
+      14,
       28,
-      12,
-      878
+      80
     ],
-    "id": 569094,
+    "id": 268,
     "original_language": "en",
-    "original_title": "Spider-Man: Across the Spider-Verse",
-    "overview": "Miles Morales retorna para o próximo capítulo da saga do Aranhaverso, uma aventura épica que transportará o Homem-Aranha em tempo integral e amigável do bairro do Brooklyn através do Multiverso para unir forças com Gwen Stacy e uma nova equipe de Homens-Aranha para enfrentar com um vilão mais poderoso do que qualquer coisa que eles já encontraram.",
-    "popularity": 18.8073,
-    "poster_path": "/4CwKj1fw33BXYzxvrpM3GlAhK4L.jpg",
-    "release_date": "2023-05-31",
-    "title": "Homem-Aranha: Através do Aranhaverso",
+    "original_title": "Batman",
+    "overview": "Em Gotham City o milionário Bruce Wayne, que quando jovem teve os pais assassinados por bandidos, resolve combater o crime como Batman, o Homem-Morcego. Mas chega o dia em que o vilão Coringa decide dominar a cidade e se torna um grande desafio para o super-herói.",
+    "popularity": 7.9283,
+    "poster_path": "/cij4dd21v2Rk2YtUQbV5kW69WB2.jpg",
+    "release_date": "1989-06-21",
+    "title": "Batman",
     "video": false,
-    "vote_average": 8.339,
-    "vote_count": 7973
-  },
-  {
-    "adult": false,
-    "backdrop_path": "/fn4n6uOYcB6Uh89nbNPoU2w80RV.jpg",
-    "genre_ids": [
-      28,
-      12,
-      878
-    ],
-    "id": 315635,
-    "original_language": "en",
-    "original_title": "Spider-Man: Homecoming",
-    "overview": "Depois de atuar ao lado dos Vingadores, chegou a hora do pequeno Peter Parker voltar para casa e para a sua vida, já não mais tão normal. Lutando diariamente contra pequenos crimes nas redondezas, ele pensa ter encontrado a missão de sua vida quando o terrível vilão Abutre surge amedrontando a cidade. O problema é que a tarefa não será tão fácil como ele imaginava.",
-    "popularity": 23.9498,
-    "poster_path": "/1nkwRL17cAGO8A1yu3miRBdvOsl.jpg",
-    "release_date": "2017-07-05",
-    "title": "Homem-Aranha: De Volta ao Lar",
-    "video": false,
-    "vote_average": 7.3,
-    "vote_count": 22566
+    "vote_average": 7.234,
+    "vote_count": 8239
   }
 ]
