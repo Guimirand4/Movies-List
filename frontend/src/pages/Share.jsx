@@ -8,18 +8,21 @@ export default function Share() {
   const { id } = useParams();
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     const fetchSharedList = async () => {
       try {
         const response = await api.get(`/share/${id}`);
-        setMovies(response.data);
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          toast.warn("⚠️ Nenhuma lista encontrada para este link.");
+        if (!response.data || response.data.length === 0) {
+          setNotFound(true);
         } else {
-          toast.error("❌ Erro ao carregar a lista compartilhada.");
+          setMovies(response.data);
         }
+      } catch (error) {
+        console.error(error);
+        toast.error("❌ Erro ao carregar lista compartilhada.");
+        setNotFound(true);
       } finally {
         setLoading(false);
       }
@@ -33,16 +36,38 @@ export default function Share() {
       <div
         style={{
           minHeight: "100vh",
+          background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
+          color: "#fff",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
-          color: "#fff",
           fontFamily: "'Poppins', sans-serif",
-          fontSize: "1.2rem",
         }}
       >
-        ⏳ Carregando lista compartilhada...
+        <h2>⏳ Carregando lista compartilhada...</h2>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
+          color: "#fff",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: "'Poppins', sans-serif",
+          textAlign: "center",
+        }}
+      >
+        <h2>😕 Lista não encontrada ou vazia</h2>
+        <p style={{ opacity: 0.8 }}>
+          O link pode ter expirado ou não conter filmes favoritos.
+        </p>
       </div>
     );
   }
@@ -68,31 +93,18 @@ export default function Share() {
         🎬 Lista Compartilhada
       </h1>
 
-      {movies.length === 0 ? (
-        <p
-          style={{
-            textAlign: "center",
-            opacity: 0.8,
-            fontSize: "1.1rem",
-          }}
-        >
-          ⚠️ Nenhum filme encontrado para este link.
-        </p>
-      ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-            gap: "20px",
-            justifyContent: "center",
-          }}
-        >
-          {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
-        </div>
-      )}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+          gap: "20px",
+          justifyContent: "center",
+        }}
+      >
+        {movies.map((movie) => (
+          <MovieCard key={movie.id} movie={movie} />
+        ))}
+      </div>
     </div>
   );
 }
-    
