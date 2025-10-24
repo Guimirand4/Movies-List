@@ -81,6 +81,61 @@ app.delete("/favorites/:id", async (req, res) => {
   }
 });
 
+// 🔗 Gerar link de compartilhamento
+app.post("/share", async (req, res) => {
+  try {
+    // Cria nova lista de compartilhamento
+    const result = await pool.query(
+      "INSERT INTO shared_lists DEFAULT VALUES RETURNING id"
+    );
+    const listId = result.rows[0].id;
+
+    // Pega todos os favoritos atuais
+    const favorites = await pool.query("SELECT id FROM favorites");
+
+    // Associa cada favorito à nova lista
+    for (const fav of favorites.rows) {
+      await pool.query(
+        "INSERT INTO shared_list_favorites (list_id, movie_id) VALUES ($1, $2)",
+        [listId, fav.id]
+      );
+    }
+
+    // Retorna o link para o front
+    res.json({
+      message: "✅ Link de compartilhamento gerado!",
+      shareUrl: `https://movies-list-nine-psi.vercel.app/share/${listId}`,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao gerar link de compartilhamento" });
+  }
+});
+
+// 🔍 Obter lista compartilhada pelo link
+app.get("/share/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query(
+      `SELECT f.* 
+       FROM shared_list_favorites slf
+       JOIN favorites f ON f.id = slf.movie_id
+       WHERE slf.list_id = $1`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Lista não encontrada" });
+    }
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao carregar lista compartilhada" });
+  }
+});
+
+
 
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => console.log(`✅ Servidor rodando na porta ${PORT}`));

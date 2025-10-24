@@ -17,6 +17,18 @@ export default function Favorites() {
     loadFavorites();
   }, []);
 
+  // 🔗 Função para gerar o link de compartilhamento
+  const generateShareLink = async () => {
+    try {
+      const response = await api.post("/share");
+      navigator.clipboard.writeText(response.data.shareUrl);
+      toast.success("🔗 Link copiado para a área de transferência!");
+    } catch (error) {
+      toast.error("❌ Erro ao gerar link de compartilhamento.");
+    }
+  };
+
+  // 🗑️ Remover filme dos favoritos
   const handleRemove = async (id) => {
     try {
       await api.delete(`/favorites/${id}`);
@@ -47,6 +59,28 @@ export default function Favorites() {
       >
         ⭐ Meus Favoritos
       </h1>
+
+      {/* 🔗 Botão de compartilhamento */}
+      <div style={{ textAlign: "center", marginBottom: "30px" }}>
+        <button
+          onClick={generateShareLink}
+          style={{
+            backgroundColor: "#00b894",
+            color: "#fff",
+            border: "none",
+            borderRadius: "25px",
+            padding: "12px 25px",
+            cursor: "pointer",
+            fontSize: "1rem",
+            fontWeight: "600",
+            transition: "background 0.3s ease",
+          }}
+          onMouseEnter={(e) => (e.target.style.backgroundColor = "#009e7c")}
+          onMouseLeave={(e) => (e.target.style.backgroundColor = "#00b894")}
+        >
+          🔗 Compartilhar lista
+        </button>
+      </div>
 
       {favorites.length === 0 ? (
         <p
@@ -114,8 +148,12 @@ export default function Favorites() {
                   fontWeight: "600",
                   transition: "background 0.3s ease",
                 }}
-                onMouseEnter={(e) => (e.target.style.backgroundColor = "#e63600")}
-                onMouseLeave={(e) => (e.target.style.backgroundColor = "#ff3c00")}
+                onMouseEnter={(e) =>
+                  (e.target.style.backgroundColor = "#e63600")
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.backgroundColor = "#ff3c00")
+                }
               >
                 Remover
               </button>

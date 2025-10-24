@@ -5,6 +5,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 import Home from "./pages/Home";
 import Favorites from "./components/Favorites";
+import Share from "./pages/Share";
+
 
 
 function Navbar() {
@@ -71,6 +73,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/favoritos" element={<Favorites />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/share/:id" element={<Share />} />
       </Routes>
 
    
