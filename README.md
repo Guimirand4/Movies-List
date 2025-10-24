@@ -1,8 +1,5 @@
 # 🎬 Verzel Movie List
-
-Aplicação full-stack desenvolvida como parte do **processo seletivo da Verzel (Elite Dev 2025)**.  
-Permite buscar filmes através da API do TMDb, favoritar e gerenciar uma lista personalizada de filmes.  
-
+ 
 ---
 
 ## 🧩 Tecnologias Utilizadas
