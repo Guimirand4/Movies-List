@@ -52,10 +52,16 @@ app.get("/favorites", async (req, res) => {
 app.post("/favorites", async (req, res) => {
   const { id, title, poster_path, vote_average } = req.body;
   try {
+    const exists = await pool.query("SELECT 1 FROM favorites WHERE id = $1", [id]);
+    if (exists.rows.length > 0) {
+      return res.status(400).json({ error: "Filme já está nos favoritos" });
+    }
+
     await pool.query(
-      "INSERT INTO favorites (id, title, poster_path, vote_average) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING",
+      "INSERT INTO favorites (id, title, poster_path, vote_average) VALUES ($1, $2, $3, $4)",
       [id, title, poster_path, vote_average]
     );
+
     res.json({ message: "🎬 Filme adicionado aos favoritos!" });
   } catch (error) {
     console.error(error);
@@ -75,6 +81,6 @@ app.delete("/favorites/:id", async (req, res) => {
   }
 });
 
-// 🚀 Start
+
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => console.log(`✅ Servidor rodando na porta ${PORT}`));
