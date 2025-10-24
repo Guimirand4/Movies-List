@@ -2,9 +2,8 @@ import express from "express";
 import axios from "axios";
 import cors from "cors";
 import dotenv from "dotenv";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import pkg from "pg";
+const { Pool } = pkg;
 
 dotenv.config();
 
@@ -12,12 +11,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Conexão com o banco Neon
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
+
 const TMDB_API = "https://api.themoviedb.org/3";
 
 // 🎬 Buscar filmes
 app.get("/movies/search", async (req, res) => {
   const { query } = req.query;
-
   try {
     const response = await axios.get(`${TMDB_API}/search/movie`, {
       params: {
@@ -26,84 +30,51 @@ app.get("/movies/search", async (req, res) => {
         language: "pt-BR",
       },
     });
-
-    return res.status(200).json(response.data);
+    res.json(response.data);
   } catch (error) {
-    console.error("Erro na requisição TMDb:", error.response?.data || error.message);
-    return res.status(500).json({
-      error: "Erro ao buscar filmes",
-      details: error.response?.data || error.message,
-    });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao buscar filmes" });
   }
-});
-
-// 🎬 Detalhes de um filme
-app.get("/movies/:id", async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const response = await axios.get(`${TMDB_API}/movie/${id}`, {
-      params: {
-        api_key: process.env.TMDB_API_KEY,
-        language: "pt-BR",
-      },
-    });
-
-    return res.status(200).json(response.data);
-  } catch (error) {
-    console.error("Erro ao buscar detalhes:", error.response?.data || error.message);
-    return res.status(500).json({
-      error: "Erro ao buscar detalhes do filme",
-      details: error.response?.data || error.message,
-    });
-  }
-});
-
-// 🗂️ Configuração de favoritos
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const FAVORITES_PATH = path.join(__dirname, "db", "favorites.json");
-
-function readFavorites() {
-  const data = fs.readFileSync(FAVORITES_PATH, "utf-8");
-  return JSON.parse(data);
-}
-
-function writeFavorites(data) {
-  fs.writeFileSync(FAVORITES_PATH, JSON.stringify(data, null, 2));
-}
-
-// ➕ Adicionar favorito
-app.post("/favorites", (req, res) => {
-  const movie = req.body;
-  const favorites = readFavorites();
-
-  if (favorites.find((f) => f.id === movie.id)) {
-    return res
-      .status(400)
-      .json({ error: "Este filme já está nos favoritos!" });
-  }
-
-  favorites.push(movie);
-  writeFavorites(favorites);
-  res.json({ message: "Filme adicionado aos favoritos!" });
-});
-
-// ➖ Remover favorito
-app.delete("/favorites/:id", (req, res) => {
-  const { id } = req.params;
-  let favorites = readFavorites();
-  favorites = favorites.filter((f) => f.id !== parseInt(id));
-  writeFavorites(favorites);
-  res.json({ message: "Filme removido!" });
 });
 
 // 📋 Listar favoritos
-app.get("/favorites", (req, res) => {
-  const favorites = readFavorites();
-  res.json(favorites);
+app.get("/favorites", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM favorites ORDER BY id DESC");
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Erro ao listar favoritos:", error);
+    res.status(500).json({ error: "Erro ao listar favoritos" });
+  }
+});
+
+// ➕ Adicionar favorito
+app.post("/favorites", async (req, res) => {
+  const { id, title, poster_path, vote_average } = req.body;
+  try {
+    await pool.query(
+      "INSERT INTO favorites (id, title, poster_path, vote_average) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING",
+      [id, title, poster_path, vote_average]
+    );
+    res.json({ message: "🎬 Filme adicionado aos favoritos!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao adicionar favorito" });
+  }
+});
+
+// ➖ Remover favorito
+app.delete("/favorites/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query("DELETE FROM favorites WHERE id = $1", [id]);
+    res.json({ message: "🗑️ Filme removido dos favoritos!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao remover favorito" });
+  }
 });
 
 // 🚀 Start
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => console.log(`✅ Servidor rodando na porta ${PORT}`));
