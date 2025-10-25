@@ -35,7 +35,8 @@ cp .env.example .env
 
 Preencha sua chave do TMDb no arquivo .env:
 
-TMDB_API_KEY=sua_chave_aqui
+TMDB_API_KEY=sua_chave_tmdb_aqui
+DATABASE_URL=sua_url_do_neondb_aqui
 PORT=5000
 
 
