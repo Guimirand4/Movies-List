@@ -76,3 +76,8 @@ GET	/movies/:id	Retorna detalhes de um filme
 GET	/favorites	Lista todos os favoritos
 POST	/favorites	Adiciona um filme aos favoritos
 DELETE	/favorites/:id	Remove um filme dos favoritos
+
+⚠️ Observação
+
+Todo o sistema está funcionando, incluindo busca, favoritos e banco de dados online.
+O link de compartilhamento gera corretamente a lista de filmes, mas, por estar hospedado em projetos separados, a tela /share/:id exibe apenas o JSON, sem o visual do React.
